@@ -12,6 +12,12 @@ from osdagbridge.core.utils.common import (
     KEY_TS_GIRDER_SPACING,
     KEY_TS_NO_OF_GIRDERS
 )
+from osdagbridge.core.reports.styles import (
+    SUMMARY_AVAILABLE_WIDTH_CM,
+    SUMMARY_COMPONENT_COLUMN_PRECISION,
+    SUMMARY_LABEL_COLUMN_CM,
+    SUMMARY_MIN_COMPONENT_COLUMN_CM,
+)
 
 
 def _max_float(values):
@@ -138,10 +144,15 @@ def executive_summary(input_dict, output_dict, fig_paths) -> str:
         labels = [("", "")]
     n_cols = len(labels)
 
-    # Column widths: row-label column fixed at 2.8cm; girder columns share remainder
-    label_col_cm = 2.8
-    # Available width ≈ 15.0cm for A4 with 1in margins; each girder col gets equal share
-    girder_col_cm = round(max(1.5, (15.0 - label_col_cm) / n_cols), 1)
+    # Girder columns share the remaining width after the fixed row-label column.
+    label_col_cm = SUMMARY_LABEL_COLUMN_CM
+    girder_col_cm = round(
+        max(
+            SUMMARY_MIN_COMPONENT_COLUMN_CM,
+            (SUMMARY_AVAILABLE_WIDTH_CM - label_col_cm) / n_cols,
+        ),
+        SUMMARY_COMPONENT_COLUMN_PRECISION,
+    )
     col_spec = '|C{' + str(label_col_cm) + 'cm}|' + '|'.join(['C{' + str(girder_col_cm) + 'cm}'] * n_cols) + '|'
 
     # Header row
@@ -161,7 +172,7 @@ def executive_summary(input_dict, output_dict, fig_paths) -> str:
     urs = f"Utilization Ratio & {ur_cells} \\\\"
 
     table1 = (r'\noindent\textbf{Table 1 -- Final Bridge Geometry (after optimization)}' + '\n\n'
-              r'\vspace{0.4em}' + '\n'
+              r'\vspace{\ReportDimEmZeroPointFour}' + '\n'
               r'\noindent' + '\n'
               r'\begin{tabular}{' + col_spec + '}\n'
               r'\hline' + '\n'
@@ -179,9 +190,9 @@ def executive_summary(input_dict, output_dict, fig_paths) -> str:
 
     return r"""
 \newpage
-{\centering\Large\bfseries Executive Summary\par}
+{\centering\ReportFontLarge\bfseries Executive Summary\par}
 \addcontentsline{toc}{chapter}{Executive Summary}
-\vspace{0.8em}
+\vspace{\ReportDimEmZeroPointEight}
 
 This section provides a concise summary of the bridge design, key inputs, governing loads, and final design outcomes.
 
@@ -190,7 +201,7 @@ This section provides a concise summary of the bridge design, key inputs, govern
 \label{sec:project-overview}
 
 
-\begin{tabular}{|L{5.5cm}|L{8.5cm}|}
+\begin{tabular}{|L{\ReportDimCmFivePointFive}|L{\ReportDimCmEightPointFive}|}
 \hline
 \textbf{Bridge Type} & """ + (_render_value(input_dict, KEY_STRUCTURE_TYPE)) + r""" \\
 \hline
@@ -221,10 +232,10 @@ This section provides a concise summary of the bridge design, key inputs, govern
 
 """ + cs_fig + '\n\n' + geom_fig + '\n\n' + table1 + r"""
 
-\vspace{0.4em}
+\vspace{\ReportDimEmZeroPointFour}
 \noindent\textit{Note: Utilization ratio (UR) = demand / capacity. A value $< 1.0$ indicates a passing check.}
 
-\vspace{1em}
+\vspace{\ReportDimEmOne}
 
 \section*{Key Design Outcomes Summary}
 \addcontentsline{toc}{section}{Key Design Outcomes Summary}
@@ -246,7 +257,4 @@ Deck design pass
 \item Splice connections and bearings are not designed in this version.
 \end{itemize}
 
-% Restore numbered chapter format
-\titleformat{\chapter}[block]{\normalfont\Large\bfseries\centering}{\thechapter}{1em}{}
-\titlespacing*{\chapter}{0pt}{-30pt}{10pt}
 """
