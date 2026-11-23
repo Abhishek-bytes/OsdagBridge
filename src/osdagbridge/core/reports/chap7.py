@@ -6,8 +6,8 @@ def ch7_quantities(input_dict):
 \noindent\textbf{Table 7.1  Bill of Materials (Steel, Concrete, and Reinforcement Quantities)}
 
 \begingroup
-\setlength{\tabcolsep}{3.5pt}
-\begin{longtable}{|C{1.0cm}|L{3.8cm}|C{2.6cm}|C{1.8cm}|C{1.8cm}|C{1.8cm}|C{1.8cm}|}
+\ReportWideTableSpacing
+\begin{longtable}{|C{\ReportDimCmOnePointZero}|L{\ReportDimCmThreePointEight}|C{\ReportDimCmTwoPointSix}|C{\ReportDimCmOnePointEight}|C{\ReportDimCmOnePointEight}|C{\ReportDimCmOnePointEight}|C{\ReportDimCmOnePointEight}|}
 \hline
 \textbf{S.N.} & \textbf{Item Description} & \textbf{Volume} & \textbf{Quantity} & \textbf{Total Volume} & \textbf{Weight (MT)} & \textbf{Total Weight (MT)} \\
 \hline
